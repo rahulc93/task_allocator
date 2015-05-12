@@ -33,4 +33,4 @@ def get_task(request):
     else:
         form = TaskForm()
 
-    return render(request, 'task/templates/task/task_entry.html', {'form': form})
+    return render(request, 'task/task_entry.html', {'form': form})
