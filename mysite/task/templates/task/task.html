@@ -1,0 +1,28 @@
+{% if task_list %}
+
+<table border = 3 align = center>
+    <thead border = 2 rowspan = 2>
+        <th colspan = 2>ID</th>
+        <th colspan = 2>Task Type</th>
+        <th colspan = 2>User Name</th>
+        <th colspan = 2>Country</th>
+        <th colspan = 2>Start Time (local)</th>
+        <th colspan = 2>End Time (local)</th>
+    </thead>
+    {% for task in task_list %}
+    <tr rowspan = 2>
+        <td colspan = 2>{{ task.id }}</td>
+        <td colspan = 2>{{ task.task_type }}</td>
+        <td colspan = 2>{{ task.user_name }}</td>
+        <td colspan = 2>{{ task.country }}</td>
+        <td colspan = 2>{{ task.start_time }}</td>
+        <td colspan = 2>{{ task.end_time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+
+<p>No tasks are available.</p>
+
+{% endif %}
