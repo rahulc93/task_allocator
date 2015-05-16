@@ -7,5 +7,7 @@ class TimezoneMiddleware(object):
         tzname = request.session.get('django_timezone')
         if tzname:
             timezone.activate(pytz.timezone(tzname))
+            print "TimeZone activated: ", tzname
         else:
             timezone.deactivate()
+            print "tzname = ", tzname

@@ -5,14 +5,14 @@
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="/user_name/" method="post">
+<form action="/task/get_task/" method="post">
     {% csrf_token %}
-    {{ form }}
     <label for="timezone">Time zone:</label>
     <select name="timezone">
         {% for tz in timezones %}
         <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected="selected"{% endif %}>{{ tz }}</option>
         {% endfor %}
     </select>
+    {{ form }}
     <input type="submit" value="Submit" />
 </form>

@@ -3,6 +3,10 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 
+from django.utils import timezone
+
+import pytz
+
 from .forms import TaskForm
 
 from task.models import Configuration
@@ -38,11 +42,14 @@ def get_task(request):
             print type(et)
             request.session['django_timezone'] = request.POST['timezone']
             print "Time Zone: ", request.session['django_timezone']
-            #time_zone = pytz.timezone( str( timezone.get_current_timezone_name() ) )
-            #time_zone = pytz.timezone('Asia/Kolkata')
-            st = st.replace(tzinfo=time_zone)
+            local_tz = timezone(str(request.session['django_timezone']))
+            local_start_date = local_tz.localize(st)
+            stu = local_start_date.astimezone(pytz.UTC)
+            local_end_date = local_tz.localize(st)
+            etu = local_end_date.astimezone(pytz.UTC)
+            st = st.replace(tzinfo=request.session['django_timezone'])
             stu = st.astimezone(pytz.utc)
-            et = et.replace(tzinfo=time_zone)
+            et = et.replace(tzinfo=request.session['django_timezone'])
             etu = et.astimezone(pytz.utc)
             curren_time = timezone.now()
             #if curren_time >= st and curren_time <= et:
@@ -53,14 +60,14 @@ def get_task(request):
             Configuration(task_type = tt, country = c, user_name = un, start_time = st, end_time = et, start_time_utc = stu, end_time_utc = etu, timezone = request.session['django_timezone']).save()
             #form.save()
             # redirect to a new URL:
-            context = {'task_list': Configuration.objects.all(), 'timezones': pytz.common_timezones}
+            context = {'task_list': Configuration.objects.all()}
             return render(request, 'task/task.html', context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = TaskForm()
 
-    return render(request, 'task/task_entry.html', {'form': form})
+    return render(request, 'task/task_entry.html', {'form': form, 'timezones': pytz.common_timezones})
 
 def set_timezone(request):
     if request.method == 'POST':
