@@ -41,16 +41,12 @@ def get_task(request):
             print "End Time entered: ", et
             print type(et)
             request.session['django_timezone'] = request.POST['timezone']
-            print "Time Zone: ", request.session['django_timezone']
+            print "Time Zone: ", request.session['django_timezone'], type(request.session['django_timezone']), str(request.session['django_timezone']), type(str(request.session['django_timezone']))
             local_tz = timezone(str(request.session['django_timezone']))
-            local_start_date = local_tz.localize(st)
-            stu = local_start_date.astimezone(pytz.UTC)
-            local_end_date = local_tz.localize(st)
-            etu = local_end_date.astimezone(pytz.UTC)
-            st = st.replace(tzinfo=request.session['django_timezone'])
-            stu = st.astimezone(pytz.utc)
-            et = et.replace(tzinfo=request.session['django_timezone'])
-            etu = et.astimezone(pytz.utc)
+            st = local_tz.localize(st)
+            stu = st.astimezone(pytz.UTC)
+            et = local_tz.localize(et)
+            etu = et.astimezone(pytz.UTC)
             curren_time = timezone.now()
             #if curren_time >= st and curren_time <= et:
                 #print 'True'
