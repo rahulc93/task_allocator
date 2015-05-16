@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 
 import pytz
+from pytz import timezone as tzone
 
 from .forms import TaskForm
 
@@ -36,18 +37,19 @@ def get_task(request):
             print "Task type entered: ", tt
             st = form.cleaned_data['start_time']
             print "Start Time entered: ", st
-            print type(st)
+            #print type(st)
             et = form.cleaned_data['end_time']
             print "End Time entered: ", et
-            print type(et)
+            #print type(et)
+            # set the django_timezone session key according to the user-entered value
             request.session['django_timezone'] = request.POST['timezone']
-            print "Time Zone: ", request.session['django_timezone'], type(request.session['django_timezone']), str(request.session['django_timezone']), type(str(request.session['django_timezone']))
-            local_tz = timezone(str(request.session['django_timezone']))
-            st = local_tz.localize(st)
-            stu = st.astimezone(pytz.UTC)
-            et = local_tz.localize(et)
-            etu = et.astimezone(pytz.UTC)
-            curren_time = timezone.now()
+            current_tz = timezone.get_current_timezone()
+            print "Currently activated Time Zone: ", current_tz
+            stu = pytz.UTC.normalize(st.astimezone(pytz.UTC))
+            print "Start Time UTC: ", stu
+            etu = pytz.UTC.normalize(et.astimezone(pytz.UTC))
+            print "End Time UTC: ", etu
+            #curren_time = timezone.now()
             #if curren_time >= st and curren_time <= et:
                 #print 'True'
             #else:
@@ -57,7 +59,7 @@ def get_task(request):
             #form.save()
             # redirect to a new URL:
             context = {'task_list': Configuration.objects.all()}
-            return render(request, 'task/task.html', context)
+            return redirect('/task', context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
