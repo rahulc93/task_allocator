@@ -10,6 +10,4 @@ class Configuration(models.Model):
     local_time_zone = models.CharField(max_length=200)
     start_time = models.DateTimeField('Start time for task')
     end_time = models.DateTimeField('End time for task')
-    start_time_utc = models.DateTimeField('Start time for task in UTC')
-    end_time_utc = models.DateTimeField('End time for task in UTC')
-    #status = models.DateTimeField('Status of the Task')
+    status = models.CharField(max_length = 200)

@@ -49,13 +49,29 @@ def get_task(request):
             print "Start Time UTC: ", stu
             etu = pytz.UTC.normalize(et.astimezone(pytz.UTC))
             print "End Time UTC: ", etu
-            #curren_time = timezone.now()
-            #if curren_time >= st and curren_time <= et:
-                #print 'True'
-            #else:
-                #print 'False'
-
-            Configuration(task_type = tt, country = c, user_name = un, start_time = st, end_time = et, start_time_utc = stu, end_time_utc = etu, timezone = request.session['django_timezone']).save()
+            time_diff = stu - pytz.UTC.normalize(timezone.now().astimezone(pytz.UTC))
+            if time_diff.seconds != 0:
+                mins, secs = divmod(time_diff.total_seconds(), 60)
+                hours, mins = divmod(mins, 60)
+                days, hours = divmod(hours, 24)
+                months, days = divmod(days, 30)
+                years, months = divmod(months, 12)
+                stat = ""
+                if years:
+                    stat += "%d years" % years
+                if months:
+                    stat += "%d months" % months
+                if days:
+                    stat += "%d days" % days
+                if hours:
+                    stat += "%d hours" % hours
+                if mins:
+                    stat += "%d minutes" % mins
+                if secs:
+                    stat += "%d secs" % secs
+            else:
+                stat = "True"
+            Configuration(task_type = tt, country = c, user_name = un, start_time = st, end_time = et, timezone = request.session['django_timezone'], status = stat).save()
             #form.save()
             # redirect to a new URL:
             context = {'task_list': Configuration.objects.all()}
@@ -67,10 +83,31 @@ def get_task(request):
 
     return render(request, 'task/task_entry.html', {'form': form, 'timezones': pytz.common_timezones})
 
-def set_timezone(request):
-    if request.method == 'POST':
-        request.session['django_timezone'] = request.POST['timezone']
-        print "django_timezone set to ", request.session['django_timezone']
-        return redirect('/task')
+def update_status(request, ident):
+    entry = Configuration.objects.filter(id = ident)
+    time_diff = pytz.UTC.normalize(entry.start_time.astimezone(pytz.UTC)) - pytz.UTC.normalize(timezone.now().astimezone(pytz.UTC))
+    if time_diff.seconds != 0:
+        mins, secs = divmod(time_diff.total_seconds(), 60)
+        hours, mins = divmod(mins, 60)
+        days, hours = divmod(hours, 24)
+        months, days = divmod(days, 30)
+        years, months = divmod(months, 12)
+        entry.status = ""
+        if years:
+            entry.status += "%d years" % years
+        if months:
+            entry.status += "%d months" % months
+        if days:
+            entry.status += "%d days" % days
+        if hours:
+            entry.status += "%d hours" % hours
+        if mins:
+            entry.status += "%d minutes" % mins
+        if secs:
+            entry.status += "%d secs" % secs
     else:
-        return render(request, 'task/timezones.html', {'timezones': pytz.common_timezones})
+        status = "True"
+    entry.save()
+    context = {'task_list': Configuration.objects.all()}
+    return redirect('/task', context)
+

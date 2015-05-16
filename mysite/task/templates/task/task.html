@@ -9,8 +9,7 @@
         <th colspan = 2>TimeZone</th>
         <th colspan = 2>Start Time (local)</th>
         <th colspan = 2>End Time (local)</th>
-        <th colspan = 2>Start Time (UTC)</th>
-        <th colspan = 2>End Time (UTC)</th>
+        <th colspan = 2>Status</th> 
     </thead>
     {% for task in task_list %}
     <tr rowspan = 2>
@@ -21,8 +20,7 @@
         <td colspan = 2>{{ task.timezone }}
         <td colspan = 2>{{ task.start_time }}</td>
         <td colspan = 2>{{ task.end_time }}</td>
-        <td colspan = 2>{{ task.start_time_utc }}</td>
-        <td colspan = 2>{{ task.end_time_utc }}</td>
+        <td colspan = 2>{{ task.status }}</td>
     </tr>
     {% endfor %}
 </table>
